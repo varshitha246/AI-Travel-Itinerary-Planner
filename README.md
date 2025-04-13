@@ -32,9 +32,11 @@ Features
 
 Technical Stack
 
-    Backend: Flask (Python) with REST API endpoints
+    Backend:
+        Flask (Python) with REST API endpoints
 
-    Frontend: Streamlit for interactive web interface
+    Frontend:
+        Streamlit for interactive web interface
 
     APIs Integrated:
 
@@ -50,15 +52,15 @@ Setup Instructions
 
     Install dependencies:
    
-    pip install flask flask_cors requests streamlit
+        pip install flask flask_cors requests streamlit
 
     Run the backend server:
     
-    python travel_itinerary1.py
+        python travel_itinerary1.py
 
     Run the frontend application:
     
-    streamlit run travel_frontend.py
+        streamlit run travel_frontend.py
 
     Access the application in your browser at http://localhost:8501
 
