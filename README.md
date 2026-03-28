@@ -1,174 +1,202 @@
+# 🌍 AI-Powered Travel Planner  
+### ✨ Smart. Dynamic. Personalized Travel Experiences
 
-# 🧭 AI-Powered Travel Planner  
-*A Full-Stack AI Web Application for Personalized Travel Itineraries*
+> 🚀 Plan smarter trips with AI-powered real-time recommendations
 
----
-
-## 📌 Overview
-**AI-Powered Travel Planner** is a full-stack web application that generates **intelligent, personalized, and day-by-day travel itineraries** based on user preferences such as destination, travel duration, budget, and interests.
-
-The application is built using a **Streamlit-based frontend** and a **Flask REST API backend**, integrates multiple real-world third-party APIs, and is deployed on modern cloud platforms following **production-ready and secure development practices**.
-
----
-
-## 🌐 Live Application
-- **Frontend (Streamlit Cloud):** [*(Click Here)*](https://travelfrontendpy-d6arskq56f3umxydntjqse.streamlit.app/)
-- **Backend API (Render):** [*(link)*](https://ai-powered-travel-planner-g8j3.onrender.com)
+![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![Streamlit](https://img.shields.io/badge/Streamlit-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)
+![Flask](https://img.shields.io/badge/Flask-000000?style=for-the-badge&logo=flask)
+![Render](https://img.shields.io/badge/Render-46E3B7?style=for-the-badge&logo=render)
 
 ---
 
-## 🚀 Key Capabilities
-- Intelligent **city search with autocomplete**
-- AI-driven **daily travel itinerary generation**
-- **Live weather insights** for destinations
-- **Restaurant and local cuisine recommendations**
-- **Attractions and landmark discovery**
-- Personalized planning based on:
-  - Budget (Economy, Standard, Luxury)
+## 🚀 Live Demo
+
+🌐 **Frontend:** https://ai-travel-itinerary-planner-2zwwz5jfw4var5jxb8buud.streamlit.app/  
+⚙️ **Backend API:** https://ai-travel-itinerary-planner-dn9y.onrender.com  
+
+---
+
+## 💡 What Makes This Different?
+
+Unlike traditional itinerary planners, this system:
+
+✔ Generates **dynamic, day-wise travel plans**  
+✔ Uses **real-time APIs (weather, places, food)**  
+✔ Fetches **context-aware images (no static placeholders)**  
+✔ Adapts recommendations based on **user interests & budget**  
+✔ Follows **production-level architecture (Frontend + Backend separation)**  
+
+---
+
+## 🧠 Core Features
+
+- 🗺️ Intelligent city search & selection  
+- 📅 AI-based daily itinerary generation  
+- 🌦️ Live weather insights for better planning  
+- 🍽️ Smart restaurant & cuisine recommendations  
+- 📍 Attractions, landmarks & hidden gems  
+- 🎯 Personalized suggestions based on:
+  - Budget (Economy / Standard / Luxury)
   - Interests (Food, Culture, Nature, Adventure, etc.)
-- Responsive and modern UI with custom styling
-- Secure handling of third-party API credentials
+- 🖼️ Dynamic image rendering based on real locations  
+- ⚡ Clean, responsive, and modern UI  
+
+---
+
+## 🔄 Data Flow
+
+User → Frontend (Streamlit) → Backend (Flask API) → External APIs → Backend → Frontend → User  
 
 ---
 
 ## 🏗️ System Architecture
 
-**Frontend**
-- Built using **Streamlit**
-- Handles user input, data visualization, and UI rendering
-- Communicates with backend via REST API calls
+### 🎨 Frontend (Streamlit)
+- Handles UI, inputs, and visualization  
+- Communicates with backend via REST APIs  
+- Designed for interactive user experience  
 
-**Backend**
-- Built using **Flask**
-- Exposes RESTful endpoints for:
-  - City search
-  - Weather retrieval
-  - Places & restaurants discovery
-  - Itinerary generation logic
-- Integrates multiple external APIs
-- Deployed as a standalone backend service
-
----
-
-## 🧰 Technology Stack
-
-### Frontend
-- Streamlit
-- Python
-- Custom CSS for enhanced UI/UX
-
-### Backend
-- Flask (REST API)
-- Flask-CORS
-- Requests
-
-### External APIs
-- **OpenWeather API** – Weather & geocoding
-- **Geoapify API** – Attractions & places
-- **Spoonacular API** – Food & cuisine data
-- **Wikipedia API** – Images & landmarks
-
-### Deployment & DevOps
-- Render (Backend hosting)
-- Streamlit Cloud (Frontend hosting)
-- Environment variables for secrets management
+### ⚙️ Backend (Flask API)
+- RESTful service architecture  
+- Handles:
+  - City search  
+  - Weather data  
+  - Places & restaurants  
+  - Itinerary generation logic  
+- Integrates multiple external APIs  
+- Deployed as a scalable cloud service  
 
 ---
 
-## 📁 Repository Structure     
+## 🧰 Tech Stack
+
+### 💻 Frontend
+- Streamlit  
+- Python  
+- Custom UI styling  
+
+### 🔧 Backend
+- Flask  
+- Flask-CORS  
+- Requests  
+
+### 🌐 External APIs
+- OpenWeather API → Weather data  
+- Geoapify API → Places & attractions  
+- Spoonacular API → Food recommendations  
+- Wikipedia API → Landmark images  
+
+### ☁️ Deployment
+- Render → Backend  
+- Streamlit Cloud → Frontend  
+
+---
+
+## 🚀 Deployment Details
+
+- Frontend deployed on **Streamlit Cloud**  
+- Backend deployed on **Render**  
+- Continuous deployment via **GitHub integration**  
+
+---
+
+## 📁 Project Structure
+```bash
+AI-Travel-Itinerary-Planner/
+│── backend/
+│ └── travel_itinerary1.py
+│
+│── frontend/
+│ └── travel_frontend.py
+│
+│── requirements.txt
+│── .gitignore
+│── README.md
 ```
+---
 
-AI-powered-travel-planner/   
-├── travel_frontend.py      # Streamlit frontend application   
-├── travel_itinerary1.py    # Flask backend REST API   
-├── requirements.txt        # Project dependencies    
-└── README.md     
+## ⚙️ How It Works
 
-```
+1️⃣ User enters destination, duration, and preferences  
+2️⃣ Frontend sends request to backend API  
+3️⃣ Backend:
+- Resolves location  
+- Fetches weather data  
+- Retrieves places & restaurants  
+- Generates structured itinerary  
+4️⃣ Frontend renders a clean, visual travel plan  
 
 ---
 
-## ⚙️ Application Workflow
-1. User submits travel preferences via the frontend
-2. Frontend sends a request to the Flask backend
-3. Backend:
-   - Resolves city and coordinates
-   - Fetches real-time weather data
-   - Retrieves attractions and restaurants
-   - Generates a structured daily itinerary
-4. Frontend renders results in an intuitive, user-friendly interface
+## 🔐 Security & Best Practices
+
+- API keys stored securely using environment variables  
+- `.env` excluded via `.gitignore`  
+- No hardcoded credentials  
+- Follows clean code and modular design  
 
 ---
 
-## 🔐 Security & Configuration
-- API keys are **never hardcoded**
-- Secrets are managed using **environment variables**
-- `.env` file is used only for local development and excluded via `.gitignore`
-- Production secrets are configured securely on Render
+## 🧪 Run Locally
 
-### Required Environment Variables
-```
-
-OPENWEATHER_API_KEY
-GEOAPIFY_API_KEY
-SPOONACULAR_API_KEY
-
-````
-
-✔️ Follows industry-standard security practices.
-
----
-
-## 🧪 Local Setup (Optional)
-
-### Install dependencies
+### 1️⃣ Install dependencies
 ```bash
 pip install -r requirements.txt
-````
-
-### Run backend
-
-```bash
-python travel_itinerary1.py
 ```
 
-### Run frontend
-
+### 2️⃣ Run Backend
 ```bash
-streamlit run travel_frontend.py
+python backend/travel_itinerary1.py
 ```
 
+### 3️⃣ Run Frontend
+```bash
+streamlit run frontend/travel_frontend.py
+```
 ---
-
-
-## 🎓 Learning Outcomes
-
-* Full-stack application design
-* REST API development with Flask
-* Integration of real-world APIs
-* Cloud deployment and service separation
-* Secure credential management
-* UI/UX design with Streamlit
-
----  
-
-## 🔮 Future Enhancements
-
-* User authentication and profiles
-* Downloadable itineraries (PDF)
-* Interactive maps
-* Multi-language support
-* Mobile-first UI improvements
 
 ---
 
-## 👩‍💻 Author
+## 📸 Screenshots
 
-**Madhuri**
-🔗 GitHub: [https://github.com/Madhuri-0607](https://github.com/Madhuri-0607)
+### 🏠 Home Page
+![Home](assets/home.png)
+
+### 🧾 Input Section
+![Input](assets/input.png)
+
+### 🗺️ Generated Itinerary
+![Itinerary](assets/itinerary.png)
+## 🎯 Key Highlights
+
+- Real-time API integration  
+- Dynamic image generation (no static data)  
+- Full-stack architecture (Frontend + Backend)  
+- Clean, scalable project structure  
 
 ---
 
-⭐ If you find this project useful, feel free to give it a star!
+## 🚀 Future Scope
 
+- ✈️ Flight & hotel integration  
+- 📄 Download itinerary as PDF  
+- 🗺️ Interactive maps  
+- 👤 User authentication system  
+- 🌍 Multi-language support  
+
+---
+
+## 👩‍💻 About Me
+
+**Kagithala Varshitha**  
+💻 AI | Full Stack | Web Development  
+🔗 LinkedIn: https://www.linkedin.com/in/varshitha-kagithala  
+📧 Email: varshithakagithala@gmail.com  
+
+---
+
+⭐ If you like this project, consider giving it a star!
+
+---
 
