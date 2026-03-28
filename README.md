@@ -137,6 +137,11 @@ AI-Travel-Itinerary-Planner/
 - Follows clean code and modular design  
 
 ---
+## ⚠️ Known Issues
+
+- API rate limits may affect response time during peak usage
+- First request may be slow due to backend cold start (Render free tier)
+- Some cities may have limited point-of-interest data
 
 ## 🧪 Run Locally
 
@@ -154,8 +159,6 @@ python backend/travel_itinerary1.py
 ```bash
 streamlit run frontend/travel_frontend.py
 ```
----
-
 ---
 
 ## 📸 Screenshots
