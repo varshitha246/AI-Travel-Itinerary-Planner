@@ -196,7 +196,6 @@ streamlit run frontend/travel_frontend.py
 
 ---
 
-⭐ If you like this project, consider giving it a star!
-
+⭐ If this project helped or inspired you, consider giving it a star — it means a lot!
 ---
 
