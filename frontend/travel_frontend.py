@@ -373,7 +373,10 @@ def main():
                 st.session_state.budget = budget
                 st.session_state.interests = interests
                 st.session_state.start_date = start_date
-                st.experimental_rerun()
+                if hasattr(st, "rerun"):
+                    st.rerun()
+                else:
+                    st.experimental_rerun()
             else:
                 st.warning("⚠️ Please enter a destination")
     
@@ -737,7 +740,10 @@ def main():
         st.markdown("<div style='margin-top: 12px;'></div>", unsafe_allow_html=True)
         if st.button("← Plan Another Trip", type="secondary", use_container_width=True):
             st.session_state.generate = False
-            st.experimental_rerun()
+            if hasattr(st, "rerun"):
+                st.rerun()
+            else:
+                st.experimental_rerun()
     
     else:
         # Enhanced Welcome screen
@@ -814,7 +820,10 @@ def main():
             st.session_state.budget = budget_val
             st.session_state.interests = interests_val
             st.session_state.start_date = datetime.date.today()
-            st.experimental_rerun()
+            if hasattr(st, "rerun"):
+                st.rerun()
+            else:
+                st.experimental_rerun()
         
         with col1:
             if st.button("Paris Adventure\n3 days • Culture & Food", use_container_width=True, key="paris"):
