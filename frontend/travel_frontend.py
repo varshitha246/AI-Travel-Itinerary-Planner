@@ -1,4 +1,5 @@
-﻿import streamlit as st
+﻿# travel_frontend.py
+import streamlit as st
 import requests
 import datetime
 from urllib.parse import quote_plus
@@ -372,7 +373,7 @@ def main():
                 st.session_state.budget = budget
                 st.session_state.interests = interests
                 st.session_state.start_date = start_date
-                st.rerun()
+                st.experimental_rerun()
             else:
                 st.warning("⚠️ Please enter a destination")
     
@@ -592,15 +593,20 @@ def main():
                                 st.info(f"🔍 Discover amazing attractions and landmarks in {display_destination}.")
                     
                     with col2:
-                        # Enhanced Destination Image with location-specific search
+                        # Enhanced Destination Image with dynamic location-specific images
                         try:
-                            image_url = location_images[0] if location_images else "https://images.pexels.com/photos/346885/pexels-photo-346885.jpeg?auto=compress&cs=tinysrgb&w=1200"
+                            # Use the first location image from API, or fallback to a dynamic search-based image
+                            if location_images and len(location_images) > 0:
+                                image_url = location_images[0]
+                            else:
+                                # Fallback to a dynamic Unsplash image based on destination
+                                image_url = f"https://source.unsplash.com/1200x800/?{quote_plus(display_destination)},city"
                             
-                            st.image(image_url, caption=f"🖼️ {display_destination}", use_container_width=True)
-                        except:
-                            # Fallback image
-                            st.image("https://images.pexels.com/photos/3944104/pexels-photo-3944104.jpeg?auto=compress&cs=tinysrgb&w=800", 
-                                    caption=f"🖼️ {display_destination}", use_container_width=True)
+                            st.image(image_url, caption=f"🖼️ {display_destination}")
+                        except Exception:
+                            # Fallback image - generic but not Paris-specific
+                            st.image("https://images.pexels.com/photos/1482182/pexels-photo-1482182.jpeg?auto=compress&cs=tinysrgb&w=800", 
+                                    caption=f"🖼️ {display_destination}")
                         
                         # Enhanced Trip Summary
                         st.markdown(f"""
@@ -634,17 +640,31 @@ def main():
                         
                         # Additional destination image - Food
                         try:
-                            food_img = food_images_api[0] if food_images_api else "https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=1200"
-                            st.image(food_img, caption=f"🍴 Cuisine of {display_destination}", use_container_width=True)
-                        except:
+                            if food_images_api and len(food_images_api) > 0:
+                                food_img = food_images_api[0]
+                            else:
+                                food_img = f"https://source.unsplash.com/1200x800/?{quote_plus(display_destination)},food"
+                            st.image(food_img, caption=f"🍴 Cuisine of {display_destination}")
+                        except Exception:
                             pass
 
                         # Mini gallery from place + food APIs
                         st.markdown('<h3 style="margin-top: 20px; margin-bottom: 10px; color: #1f2937;">🖼️ City Gallery</h3>', unsafe_allow_html=True)
-                        for idx, url in enumerate(location_images[1:4], 1):
-                            st.image(url, caption=f"Place {idx} in {display_destination}", use_container_width=True)
-                        for idx, url in enumerate(food_images_api[1:3], 1):
-                            st.image(url, caption=f"Food {idx} in {display_destination}", use_container_width=True)
+                        # Show dynamic gallery images if available
+                        gallery_images = []
+                        if location_images:
+                            gallery_images.extend(location_images[1:4])
+                        if food_images_api:
+                            gallery_images.extend(food_images_api[1:3])
+                        
+                        if gallery_images:
+                            for idx, url in enumerate(gallery_images[:5], 1):
+                                try:
+                                    st.image(url, caption=f"{display_destination} Gallery {idx}")
+                                except Exception:
+                                    pass
+                        else:
+                            st.caption(f"More images of {display_destination} will appear here.")
                     
                     # Enhanced Travel Tips
                     st.markdown('<h2 style="margin-top: 50px; margin-bottom: 25px;">💡 Smart Travel Tips</h2>', unsafe_allow_html=True)
@@ -717,7 +737,7 @@ def main():
         st.markdown("<div style='margin-top: 12px;'></div>", unsafe_allow_html=True)
         if st.button("← Plan Another Trip", type="secondary", use_container_width=True):
             st.session_state.generate = False
-            st.rerun()
+            st.experimental_rerun()
     
     else:
         # Enhanced Welcome screen
@@ -775,14 +795,12 @@ def main():
         
         with col2:
             st.image(
-                "https://images.pexels.com/photos/338515/pexels-photo-338515.jpeg?auto=compress&cs=tinysrgb&w=800",
-                use_container_width=True
-            )
-            
+    "https://images.pexels.com/photos/338515/pexels-photo-338515.jpeg?auto=compress&cs=tinysrgb&w=800"
+)
+
             st.image(
-                "https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=800",
-                use_container_width=True
-            )
+    "https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=800"
+)
         
         # Quick start examples with enhanced styling
         st.markdown('<h2 style="margin-top: 50px; margin-bottom: 25px; text-align: center;">▶️ Quick Start Examples</h2>', unsafe_allow_html=True)
@@ -796,7 +814,7 @@ def main():
             st.session_state.budget = budget_val
             st.session_state.interests = interests_val
             st.session_state.start_date = datetime.date.today()
-            st.rerun()
+            st.experimental_rerun()
         
         with col1:
             if st.button("Paris Adventure\n3 days • Culture & Food", use_container_width=True, key="paris"):
@@ -828,9 +846,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-
-
-
-

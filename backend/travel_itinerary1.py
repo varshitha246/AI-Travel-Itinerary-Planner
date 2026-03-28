@@ -1,15 +1,15 @@
+# travel_itinerary1.py
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import requests
 import random
 import os
+from urllib.parse import quote_plus
 
 app = Flask(__name__)
 CORS(app)
 
 # API Keys
-
-
 OPENWEATHER_API_KEY = os.getenv("OPENWEATHER_API_KEY")
 GEOAPIFY_API_KEY = os.getenv("GEOAPIFY_API_KEY")
 SPOONACULAR_API_KEY = os.getenv("SPOONACULAR_API_KEY")
@@ -19,7 +19,7 @@ OPENWEATHER_WEATHER_URL = "https://api.openweathermap.org/data/2.5/weather"
 GEOAPIFY_PLACES_URL = "https://api.geoapify.com/v2/places"
 SPOONACULAR_SEARCH_URL = "https://api.spoonacular.com/recipes/complexSearch"
 WIKIPEDIA_API_URL = "https://en.wikipedia.org/w/api.php"
-
+UNSPLASH_API_URL = "https://source.unsplash.com"
 
 def safe_get_json(url, params=None, timeout=12):
     try:
@@ -35,7 +35,6 @@ def safe_get_json(url, params=None, timeout=12):
         pass
     return None
 
-
 def unique_by(items, key_func):
     seen = set()
     output = []
@@ -45,7 +44,6 @@ def unique_by(items, key_func):
             seen.add(key)
             output.append(item)
     return output
-
 
 def search_cities(query, limit=8):
     query = (query or "").strip()
@@ -82,7 +80,6 @@ def search_cities(query, limit=8):
 
     return unique_by(cities, lambda x: x["display_name"])[:limit]
 
-
 def resolve_city(query):
     matches = search_cities(query, limit=1)
     if matches:
@@ -98,7 +95,6 @@ def resolve_city(query):
         "lon": None,
         "display_name": raw,
     }
-
 
 def get_weather(lat, lon, city_name):
     if lat is not None and lon is not None:
@@ -134,7 +130,6 @@ def get_weather(lat, lon, city_name):
         "humidity": random.randint(35, 85),
     }
 
-
 def map_interest_to_categories(interests):
     category_map = {
         "Adventure": ["entertainment", "leisure.park"],
@@ -153,7 +148,6 @@ def map_interest_to_categories(interests):
         selected = ["tourism.sights", "entertainment.museum", "leisure.park", "natural"]
 
     return unique_by(selected, lambda x: x)
-
 
 def _fetch_geoapify_places(lat, lon, categories, limit=20, radius_m=7000):
     if lat is None or lon is None:
@@ -191,14 +185,12 @@ def _fetch_geoapify_places(lat, lon, categories, limit=20, radius_m=7000):
         )
     return output
 
-
 def get_places(lat, lon, interests=None):
     categories = map_interest_to_categories(interests)
     attractions = _fetch_geoapify_places(lat, lon, categories, limit=24, radius_m=10000)
     attractions = unique_by(attractions, lambda x: x["name"])
     attractions.sort(key=lambda x: x.get("distance_m", 0))
     return attractions[:12]
-
 
 def get_restaurants(lat, lon, budget="Standard"):
     categories = ["catering.restaurant", "catering.fast_food", "catering.cafe"]
@@ -229,7 +221,6 @@ def get_restaurants(lat, lon, budget="Standard"):
         )
     return output
 
-
 def generate_local_specialties(city, country):
     seed_text = f"{city}-{country}".lower()
     pool = [
@@ -248,7 +239,6 @@ def generate_local_specialties(city, country):
     picks = random.sample(pool, 5)
     random.seed()
     return picks
-
 
 def get_spoonacular_food(city, country="", number=8):
     query_parts = [city, country, "local cuisine"]
@@ -274,8 +264,8 @@ def get_spoonacular_food(city, country="", number=8):
         foods.append({"name": title, "image": image})
     return foods
 
-
 def get_wikipedia_thumbnail(query, size=1000):
+    # Use dynamic query that includes the city name for better relevance
     params = {
         "action": "query",
         "format": "json",
@@ -297,26 +287,60 @@ def get_wikipedia_thumbnail(query, size=1000):
             return thumb
     return ""
 
+def get_dynamic_image_url(query, size=1200):
+    """Generate a dynamic image URL using Unsplash source API with proper query"""
+    encoded_query = quote_plus(query)
+    return f"https://source.unsplash.com/{size}x{size}/?{encoded_query}"
 
 def build_location_images(city, attractions, limit=6):
-    names = [a.get("name", "").strip() for a in (attractions or []) if a.get("name")]
-    queries = names[:limit]
-    if city:
-        queries.insert(0, f"{city} skyline landmark")
-
-    urls = []
-    for q in queries:
-        img = get_wikipedia_thumbnail(q, size=1200)
-        if img:
-            urls.append(img)
-
-    if not urls:
-        urls = [
-            "https://images.pexels.com/photos/346885/pexels-photo-346885.jpeg?auto=compress&cs=tinysrgb&w=1200",
-            "https://images.pexels.com/photos/3155666/pexels-photo-3155666.jpeg?auto=compress&cs=tinysrgb&w=1200",
+    """
+    Build a list of image URLs for the destination using dynamic queries
+    instead of static fallbacks. This ensures city-specific images.
+    """
+    image_urls = []
+    
+    # First, try to get images from attractions
+    if attractions:
+        for attraction in attractions[:limit]:
+            name = attraction.get("name", "").strip()
+            if name:
+                # Use the attraction name with city context
+                query = f"{name} {city} landmark"
+                wiki_img = get_wikipedia_thumbnail(query, size=1200)
+                if wiki_img:
+                    image_urls.append(wiki_img)
+                
+                # Also add unsplash image for diversity
+                unsplash_url = get_dynamic_image_url(f"{name} {city}", 1200)
+                image_urls.append(unsplash_url)
+    
+    # If we still need more images, add city-specific queries
+    if len(image_urls) < limit:
+        city_queries = [
+            f"{city} city skyline",
+            f"{city} tourism",
+            f"{city} famous place",
+            f"{city} travel destination"
         ]
-    return unique_by(urls, lambda x: x)[:limit]
-
+        for query in city_queries:
+            if len(image_urls) >= limit:
+                break
+            unsplash_url = get_dynamic_image_url(query, 1200)
+            image_urls.append(unsplash_url)
+    
+    # Remove duplicates while preserving order
+    unique_urls = []
+    seen = set()
+    for url in image_urls:
+        if url not in seen:
+            seen.add(url)
+            unique_urls.append(url)
+    
+    # If we still have no images, add a final dynamic fallback
+    if not unique_urls:
+        unique_urls = [get_dynamic_image_url(f"{city} travel destination", 1200)]
+    
+    return unique_urls[:limit]
 
 def generate_daily_activities(day, city, attractions, restaurants, interests):
     themes = ["Landmarks & History", "Culture & Arts", "Food & Markets", "Nature & Relaxation", "Adventure & Exploration"]
@@ -353,13 +377,11 @@ def generate_daily_activities(day, city, attractions, restaurants, interests):
         "evening": evening,
     }
 
-
 @app.route("/city-search", methods=["GET"])
 def city_search():
     query = request.args.get("q", "").strip()
     limit = int(request.args.get("limit", 8))
     return jsonify({"query": query, "cities": search_cities(query, limit=limit)})
-
 
 @app.route("/itinerary", methods=["POST"])
 def generate_itinerary():
@@ -381,10 +403,15 @@ def generate_itinerary():
     attractions = get_places(lat, lon, interests)
     spoonacular_food = get_spoonacular_food(city, country, number=8)
 
+    # Add images to attractions with city-specific queries
     if attractions:
         for a in attractions:
-            q = a.get("name") or city
-            a["image"] = get_wikipedia_thumbnail(q, size=1000) or "https://images.pexels.com/photos/346885/pexels-photo-346885.jpeg?auto=compress&cs=tinysrgb&w=1000"
+            q = f"{a.get('name')} {city}"
+            wiki_img = get_wikipedia_thumbnail(q, size=1000)
+            if wiki_img:
+                a["image"] = wiki_img
+            else:
+                a["image"] = get_dynamic_image_url(q, 1000)
 
     itinerary = []
     for day in range(1, days + 1):
@@ -423,29 +450,25 @@ def generate_itinerary():
         "itinerary": itinerary,
         "local_specialties": [f["name"] for f in spoonacular_food[:5]] or generate_local_specialties(city, country),
         "food_images": [f["image"] for f in spoonacular_food if f.get("image")][:8] or [
-            "https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=1200",
-            "https://images.pexels.com/photos/958545/pexels-photo-958545.jpeg?auto=compress&cs=tinysrgb&w=1200",
+            get_dynamic_image_url(f"{city} local food", 1200),
+            get_dynamic_image_url(f"{city} cuisine", 1200),
         ],
         "location_images": build_location_images(city, attractions, limit=8),
         "famous_landmarks": [a.get("name") for a in attractions[:5] if a.get("name")] or [f"Popular spots in {city}"],
     }
     return jsonify(response)
 
-
 @app.route("/test", methods=["GET"])
 def test():
     return jsonify({"status": "Server is running!", "message": "Dynamic Travel Itinerary API"})
-
 
 @app.route("/health", methods=["GET"])
 def health():
     return jsonify({"status": "healthy"})
 
-
 @app.route("/cities", methods=["GET"])
 def cities_help():
     return jsonify({"message": "Use /city-search?q=<name> to search cities dynamically."})
-
 
 if __name__ == "__main__":
     # Keep reloader off to avoid Windows watchdog race conditions and noisy restarts.
